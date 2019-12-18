@@ -1,10 +1,14 @@
 package com.example.springmvc.Service;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,19 +56,52 @@ public class QueryDSLService {
 	
 	
 	public List<HealthData> multiMatchHealthQuery(String text) {
-		/*
-		 * SearchQuery searchQuery = new
-		 * NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(text)
-		 * .field("purposeOfVisit").field("mainComplaint").field("pastOcularHistory").
-		 * field("pastMedicalHistory").
-		 * field("familyHistory").field("allergyHistory").field("currentMedication").
-		 * type(MultiMatchQueryBuilder.Type.BEST_FIELDS)).build();
-		 */
 		SearchQuery searchQuery1 = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(text).fuzziness("auto").type(MultiMatchQueryBuilder.Type.BEST_FIELDS)).build();
 				List<HealthData> products = template.queryForList(searchQuery1, HealthData.class);
 		return products;
 	}
 
+	public List<HealthData> booleanHealthQuery(String searchText,String fieldName) {
+		Map<String, Object>  rangeOperation=new HashMap<String, Object>();
+		 rangeOperation.put("LTE", 80);
+		 rangeOperation.put("GTE", 30);
+		SearchQuery searchQuery1 = new NativeSearchQueryBuilder().withQuery(QueryBuilders.boolQuery().must(QueryBuilders.multiMatchQuery(searchText).fuzziness("auto").type(MultiMatchQueryBuilder.Type.BEST_FIELDS)).filter(createRangeQuery(fieldName, rangeOperation, 1.0f))).build();
+				List<HealthData> products = template.queryForList(searchQuery1, HealthData.class);
+		return products;
+	}
+	
+	public List<HealthData> rangeHealthQuery(String text) {
+		 Map<String, Object>  rangeOperation=new HashMap<String, Object>();
+		 rangeOperation.put("LTE", 70);
+		 rangeOperation.put("GTE", 30);
+		SearchQuery searchQuery1 = new NativeSearchQueryBuilder().withQuery(createRangeQuery(text, rangeOperation, 1.0f)).build();
+				List<HealthData> products = template.queryForList(searchQuery1, HealthData.class);
+		return products;
+	}
+	
+	
+	private static RangeQueryBuilder createRangeQuery(String fieldName, Map<String, Object> rangeOperation,
+		    Float boost) {
+
+		  RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(fieldName);
+		  for (Map.Entry<String, Object> it : rangeOperation.entrySet()) {
+		    if (it.getKey().equalsIgnoreCase("LTE")) {
+		      rangeQueryBuilder.lte(it.getValue());
+		    } else if (it.getKey().equalsIgnoreCase("LT")) {
+		      rangeQueryBuilder.lt(it.getValue());
+		    } else if (it.getKey().equalsIgnoreCase("GTE")) {
+		      rangeQueryBuilder.gte(it.getValue());
+		    } else if (it.getKey().equalsIgnoreCase("GT")) {
+		      rangeQueryBuilder.gt(it.getValue());
+		    }
+		  }
+		/*
+		 * if (isNotNull(boost)) { return rangeQueryBuilder.boost(boost); }
+		 */
+		  return rangeQueryBuilder;
+		}
+
+	
 	public void multiMatchQueryWithAggregation(String text) {
 		SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.multiMatchQuery(text)
 				.field("name").field("description").type(MultiMatchQueryBuilder.Type.BEST_FIELDS)).addAggregation(AggregationBuilders.terms("agg1").field("sold")).build();

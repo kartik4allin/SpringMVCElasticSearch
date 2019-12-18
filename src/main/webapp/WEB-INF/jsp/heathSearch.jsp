@@ -43,8 +43,8 @@
 	                	<form action="/searchHealthQuery" method="POST" class="form-inline">
 	                    	<div class="form-group" >
 	                    		<h1>Health Search</h1>
-	                        	<!-- <input type="text" name="query" class="form-control" placeholder="Enter your search query" value="" /> -->
-	                        	<input name="query" class="form-control form-control-lg" type="text" placeholder="Enter your query" value=""/>
+	                        	<input type="text" name="query" class="form-control" placeholder="Enter your search query" value="" />
+	                        	<!-- <input name="query" class="form-control form-control-lg" type="text" placeholder="Enter your query" value=""/> -->
 	                        	<button type="submit" name="search-button" class="form-control glyphicon glyphicon-search"></button>
 	                    	</div>
 	               		 </form>

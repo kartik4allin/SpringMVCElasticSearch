@@ -1,0 +1,175 @@
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+GET /products/_search
+{
+  "size":0,
+  "query": {
+    "range": {
+      "sold": {
+        "gte": 10,
+        "lte": 20
+      }
+    }
+  }, 
+  "aggs": {
+    "sold_items": {
+      "terms": {
+        "field": "sold"
+        
+      }
+    }
+  }
+}
+
+DELETE /healthdata
+
+GET /healthdata/_count
+
+GET /healthdata/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET /healthdata/_search
+{
+  "query":{
+    "match": {
+      "mainComplaint":"right eye cataract"
+        
+      
+    }
+  }
+}
+
+GET /healthdata/_search
+{
+    "query": {
+        "range" : {
+            "age" : {
+                "gte" : 30,
+                "lte" : 80,
+                "boost" : 2.0
+            }
+        }
+    }
+}
+
+
+POST /healthdata/_search
+{
+  "query": {
+    "bool" : {
+      
+      "must" :[
+        {
+          "match":{
+             "mainComplaint":"right eye cataract"
+          }
+        }
+        
+      
+      ]
+    }
+  }
+}
+
+
+
+
+GET /healthdata/_search
+{
+  "query":{
+    "match_phrase": {
+      "mainComplaint":"right eye cataract"
+        
+      
+    }
+  }
+}
+
+# match phrase searches for the exact phrase 
+#while match query doesnt looks for exact phrase
+GET /healthdata/_search
+{
+  "query":{
+    "match_phrase": {
+      "mainComplaint":"left eye cataract"
+        
+      
+    }
+  }
+}
+
+# even the sequence can be inverted for match query
+#Even the 
+GET /healthdata/_search
+{
+  "query":{
+    "match": {
+      "mainComplaint":"left  cataract eye"
+        
+      
+    }
+  }
+}
+
+#fuzziness.
+GET /healthdata/_search
+{
+  "query":{
+    "match": {
+      "mainComplaint":"catract"
+        
+      
+    }
+  }
+}
+
+GET /healthdata/_search
+{
+  "query":{
+    "match": {
+      "mainComplaint":{
+       "query":"catract",
+       "fuzziness": "auto"
+      }
+      
+    }
+  }
+}
+
+
+GET /logstash-2019.11.30-000001/_count
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+GET /customer/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET /products/_search
+{
+  "query" : {
+      "match_all" : {}
+    },
+    "facets" : {
+        "products" : {
+            "terms" : { "field" : "description", "size" : 25  }
+        }
+    }
+}
