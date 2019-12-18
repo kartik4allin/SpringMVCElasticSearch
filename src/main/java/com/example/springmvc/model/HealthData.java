@@ -83,6 +83,7 @@ public class HealthData {
 
 	public String getPastOcularHistory() {
 		return pastOcularHistory;
+		
 	}
 
 	public void setPastOcularHistory(String pastOcularHistory) {

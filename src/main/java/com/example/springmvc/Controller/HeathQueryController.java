@@ -35,9 +35,18 @@ public class HeathQueryController {
 	
 	@RequestMapping(value = "/searchHealthQuery", method = RequestMethod.POST)
 	public ModelAndView searchQuery(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("SearchQuery text is  $$$ "+request.getParameter("query"));
 		String searchQuery = request.getParameter("query");
-		List<HealthData> healthData = service.multiMatchHealthQuery(searchQuery);
+		int fromAge = 0;
+		int toAge = 100;
+		if(request.getParameter("fromAge")!=null && request.getParameter("fromAge")!="")
+			fromAge = new Integer(request.getParameter("fromAge")).intValue();
+		if(request.getParameter("toAge")!=null  && request.getParameter("toAge")!="")
+			toAge = new Integer(request.getParameter("toAge")).intValue();
+		System.out.println("SearchQuery text is  $$$ "+request.getParameter("query"));
+		System.out.println("SearchQuery fromAge is  $$$ "+request.getParameter("fromAge"));
+		System.out.println("SearchQuery toAge is  $$$ "+request.getParameter("toAge"));
+		//List<HealthData> healthData = service.multiMatchHealthQuery(searchQuery);
+		List<HealthData> healthData = service.booleanHealthQuery(searchQuery, "age", fromAge, toAge);
 		healthData.forEach(data->System.out.println(data));
 		return new ModelAndView("heathSearch", "healthData", healthData);
 	} 

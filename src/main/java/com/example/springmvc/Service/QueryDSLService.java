@@ -61,10 +61,11 @@ public class QueryDSLService {
 		return products;
 	}
 
-	public List<HealthData> booleanHealthQuery(String searchText,String fieldName) {
+	public List<HealthData> booleanHealthQuery(String searchText,String fieldName,int fromAge,int toAge) {
 		Map<String, Object>  rangeOperation=new HashMap<String, Object>();
-		 rangeOperation.put("LTE", 80);
-		 rangeOperation.put("GTE", 30);
+		 rangeOperation.put("LTE", toAge);
+		 rangeOperation.put("GTE", fromAge);
+		 
 		SearchQuery searchQuery1 = new NativeSearchQueryBuilder().withQuery(QueryBuilders.boolQuery().must(QueryBuilders.multiMatchQuery(searchText).fuzziness("auto").type(MultiMatchQueryBuilder.Type.BEST_FIELDS)).filter(createRangeQuery(fieldName, rangeOperation, 1.0f))).build();
 				List<HealthData> products = template.queryForList(searchQuery1, HealthData.class);
 		return products;

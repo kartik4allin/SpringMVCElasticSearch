@@ -53,7 +53,7 @@ public class QueryDSLController {
 	
 	@GetMapping(value = "/booleanHealthQuery/{searchText}")
 	public List<HealthData> booleanHealthQuery(@PathVariable String searchText) {
-		List<HealthData> healthData = service.booleanHealthQuery(searchText,"age");
+		List<HealthData> healthData = service.booleanHealthQuery(searchText,"age",30,70);
 		healthData.forEach(data->System.out.println(data));
 		return healthData;
 		//return new ModelAndView("heathSearch", "healthData", healthData);
